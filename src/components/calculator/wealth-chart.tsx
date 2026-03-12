@@ -12,13 +12,12 @@ import {
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 
 const COLORS = [
-  "oklch(0.65 0.19 145)",   // green  — rent
-  "oklch(0.62 0.21 260)",   // blue
-  "oklch(0.55 0.24 263)",   // indigo
-  "oklch(0.65 0.20 30)",    // orange
-  "oklch(0.58 0.22 330)",   // pink
-  "oklch(0.50 0.20 290)",   // purple
-  "oklch(0.60 0.18 200)",   // teal
+  "#f5ed68",
+  "#f6d164",
+  "#f7b460",
+  "#f7985b",
+  "#f87b57",
+  "#f95f53",
 ];
 
 function fmtK(n: number): string {
