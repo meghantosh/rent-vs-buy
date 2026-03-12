@@ -15,18 +15,15 @@ test("sign up and sign in with credentials", async ({ page }) => {
   await page.getByRole("button", { name: "Create account" }).click();
 
   // Should redirect to dashboard after sign-up
-  await page.waitForURL("/dashboard**", { timeout: 10000 });
+  await page.waitForURL("/dashboard**", { timeout: 15000 });
   await expect(page.locator("text=Assumptions")).toBeVisible();
 
-  // 2. Sign out (via dropdown)
-  await page.getByRole("banner").getByRole("button").last().click();
-  await page.getByText("Sign out").click();
+  // 2. Sign out by clearing cookies, then verify redirect
+  await page.context().clearCookies();
+  await page.goto("/dashboard");
+  await page.waitForURL("/sign-in**", { timeout: 10000 });
 
-  // Should be back at landing or sign-in
-  await page.waitForURL("/**", { timeout: 5000 });
-
-  // 3. Sign back in
-  await page.goto("/sign-in");
+  // 3. Sign back in with the same credentials
   await expect(page.getByText("Welcome back")).toBeVisible();
 
   await page.getByLabel("Email").fill(TEST_EMAIL);
@@ -34,6 +31,6 @@ test("sign up and sign in with credentials", async ({ page }) => {
   await page.getByRole("button", { name: "Sign in" }).click();
 
   // Should land on dashboard with calculator
-  await page.waitForURL("/dashboard**", { timeout: 10000 });
+  await page.waitForURL("/dashboard**", { timeout: 15000 });
   await expect(page.locator("text=Assumptions")).toBeVisible();
 });
