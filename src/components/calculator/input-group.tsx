@@ -29,7 +29,7 @@ export function InputGroup({
       <Label className="text-xs text-muted-foreground">{label}</Label>
       <div className="relative flex items-center">
         {prefix && (
-          <span className="absolute left-2.5 text-sm text-muted-foreground pointer-events-none">
+          <span className="absolute left-0 text-sm text-muted-foreground pointer-events-none">
             {prefix}
           </span>
         )}
@@ -40,10 +40,10 @@ export function InputGroup({
           step={step}
           min={min}
           max={max}
-          className={prefix ? "pl-6" : suffix ? "pr-6" : ""}
+          className={prefix ? "pl-4" : suffix ? "pr-4" : ""}
         />
         {suffix && (
-          <span className="absolute right-2.5 text-sm text-muted-foreground pointer-events-none">
+          <span className="absolute right-0 text-sm text-muted-foreground pointer-events-none">
             {suffix}
           </span>
         )}
