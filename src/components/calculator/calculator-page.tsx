@@ -1,5 +1,6 @@
 "use client";
 
+import type { CalculatorInputs } from "@/lib/calculator/types";
 import { useCalculator } from "@/hooks/use-calculator";
 import { InputForm } from "./input-form";
 import { SummaryCards } from "./summary-cards";
@@ -8,17 +9,37 @@ import { WealthChart } from "./wealth-chart";
 import { MonthlyCostChart } from "./monthly-cost-chart";
 import { ScenarioComparisonChart } from "./scenario-comparison-chart";
 import { ResultsTable } from "./results-table";
+import { SaveDialog } from "./save-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export function CalculatorPage() {
-  const { inputs, setInputs, results } = useCalculator();
+interface CalculatorPageProps {
+  initialInputs?: CalculatorInputs;
+  initialId?: string;
+  initialName?: string;
+}
+
+export function CalculatorPage({ initialInputs, initialId, initialName }: CalculatorPageProps) {
+  const { inputs, setInputs, results, savedId, savedName, saving, dirty, save } = useCalculator(
+    initialInputs,
+    initialId,
+    initialName
+  );
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 p-4 lg:p-6">
       {/* Sidebar — input form */}
       <aside className="w-full lg:w-[380px] shrink-0">
         <div className="sticky top-20 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
-          <h2 className="text-lg font-bold">Assumptions</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold">Assumptions</h2>
+            <SaveDialog
+              currentName={savedName}
+              saving={saving}
+              dirty={dirty}
+              savedId={savedId}
+              onSave={save}
+            />
+          </div>
           <InputForm inputs={inputs} onChange={setInputs} />
         </div>
       </aside>
