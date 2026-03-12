@@ -1,65 +1,141 @@
-import Image from "next/image";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function Home() {
+const steps = [
+  {
+    number: "1",
+    title: "Enter your numbers",
+    description:
+      "Input your income, rent, home prices, down payment, interest rates, and other assumptions.",
+  },
+  {
+    number: "2",
+    title: "Compare scenarios",
+    description:
+      "See side-by-side comparisons across multiple price points and loan terms.",
+  },
+  {
+    number: "3",
+    title: "Make a confident decision",
+    description:
+      "Understand the true cost of renting vs. buying with 30-year projections.",
+  },
+];
+
+const features = [
+  {
+    title: "Multiple price points",
+    description:
+      "Compare 3 different home prices simultaneously to find your sweet spot.",
+  },
+  {
+    title: "15yr vs. 30yr loans",
+    description:
+      "See how loan term affects your monthly payment, total interest, and net worth.",
+  },
+  {
+    title: "Rent escalation",
+    description:
+      "Model annual rent increases to see the long-term cost of continuing to rent.",
+  },
+  {
+    title: "Opportunity cost",
+    description:
+      "Account for investment returns on your down payment if you chose to rent instead.",
+  },
+  {
+    title: "CA tax logic",
+    description:
+      "California-specific tax calculations including Prop 13 property tax caps.",
+  },
+  {
+    title: "30-year projections",
+    description:
+      "Year-by-year breakdowns showing cumulative costs and net worth over time.",
+  },
+];
+
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main>
+      {/* Hero */}
+      <section className="container mx-auto px-4 py-24 text-center">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight max-w-3xl mx-auto">
+          Should you rent or buy?
+        </h1>
+        <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
+          Stop guessing. Compare scenarios with real math — opportunity cost,
+          rent escalation, California taxes, and 30-year projections — so you
+          can make a confident decision.
+        </p>
+        <div className="mt-10 flex gap-4 justify-center">
+          <Link href="/sign-up" className={buttonVariants({ size: "lg" })}>
+            Get Started
+          </Link>
+          <Link href="/sign-in" className={buttonVariants({ size: "lg", variant: "outline" })}>
+            Sign In
+          </Link>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="bg-muted/50 py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">How it works</h2>
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {steps.map((step) => (
+              <div key={step.number} className="text-center space-y-3">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold">
+                  {step.number}
+                </div>
+                <h3 className="text-xl font-semibold">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="container mx-auto px-4 py-20">
+        <h2 className="text-3xl font-bold text-center mb-12">
+          What makes this different
+        </h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {features.map((feature) => (
+            <Card key={feature.title}>
+              <CardHeader>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">{feature.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-muted/50 py-20">
+        <div className="container mx-auto px-4 text-center space-y-6">
+          <h2 className="text-3xl font-bold">Ready to run your numbers?</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto">
+            Create a free account and start comparing rent vs. buy scenarios in
+            minutes.
           </p>
+          <Link href="/sign-up" className={buttonVariants({ size: "lg" })}>
+            Get Started Free
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t py-8">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} Rent vs. Buy Calculator
         </div>
-      </main>
-    </div>
+      </footer>
+    </main>
   );
 }
