@@ -66,6 +66,7 @@ export const calculations = pgTable("calculations", {
     .references(() => users.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   inputs: jsonb("inputs").notNull(),
+  shareId: text("shareId").unique(),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
   updatedAt: timestamp("updatedAt", { mode: "date" }).defaultNow(),
 });

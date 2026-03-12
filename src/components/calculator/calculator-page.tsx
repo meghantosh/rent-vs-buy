@@ -10,6 +10,7 @@ import { MonthlyCostChart } from "./monthly-cost-chart";
 import { ScenarioComparisonChart } from "./scenario-comparison-chart";
 import { ResultsTable } from "./results-table";
 import { SaveDialog } from "./save-dialog";
+import { ShareButton } from "./share-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CalculatorPageProps {
@@ -30,15 +31,18 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
       {/* Sidebar — input form */}
       <aside className="w-full lg:w-[380px] shrink-0">
         <div className="sticky top-20 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <h2 className="text-lg font-bold">Assumptions</h2>
-            <SaveDialog
-              currentName={savedName}
-              saving={saving}
-              dirty={dirty}
-              savedId={savedId}
-              onSave={save}
-            />
+            <div className="flex items-center gap-1">
+              {savedId && <ShareButton calculationId={savedId} />}
+              <SaveDialog
+                currentName={savedName}
+                saving={saving}
+                dirty={dirty}
+                savedId={savedId}
+                onSave={save}
+              />
+            </div>
           </div>
           <InputForm inputs={inputs} onChange={setInputs} />
         </div>
