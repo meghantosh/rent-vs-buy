@@ -15,9 +15,10 @@ interface Calculation {
 interface ScenarioSelectorProps {
   savedId: string | null;
   savedName: string;
+  actions?: React.ReactNode;
 }
 
-export function ScenarioSelector({ savedId, savedName }: ScenarioSelectorProps) {
+export function ScenarioSelector({ savedId, savedName, actions }: ScenarioSelectorProps) {
   const { data: session } = useSession();
   const [calculations, setCalculations] = useState<Calculation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,20 +63,28 @@ export function ScenarioSelector({ savedId, savedName }: ScenarioSelectorProps) 
   const hasScenarios = session?.user && !loading && calculations.length > 0;
 
   if (!hasScenarios) {
-    return <h1 className="text-2xl font-bold">{displayName}</h1>;
+    return (
+      <div className="flex items-start justify-between gap-2">
+        <h1 className="text-2xl font-bold text-left">{displayName}</h1>
+        {actions}
+      </div>
+    );
   }
 
   return (
     <div>
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 text-2xl font-bold cursor-pointer bg-transparent border-none p-0"
-      >
-        <ChevronRight
-          className={`h-5 w-5 transition-transform ${open ? "rotate-90" : ""}`}
-        />
-        {displayName}
-      </button>
+      <div className="flex items-start justify-between gap-2">
+        <button
+          onClick={() => setOpen(!open)}
+          className="flex items-start gap-2 text-2xl font-bold text-left cursor-pointer bg-transparent border-none p-0"
+        >
+          <ChevronRight
+            className={`h-5 w-5 mt-1.5 shrink-0 transition-transform ${open ? "rotate-90" : ""}`}
+          />
+          {displayName}
+        </button>
+        {actions}
+      </div>
 
       {open && (
         <div className="mt-2 space-y-1">

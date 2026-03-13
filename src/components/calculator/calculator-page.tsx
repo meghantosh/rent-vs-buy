@@ -32,28 +32,29 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
 
   return (
     <div className="p-4 lg:p-6 space-y-6">
-      {/* Full-width title row */}
-      <div className="flex items-center justify-between gap-4">
-        <ScenarioSelector savedId={savedId} savedName={savedName} />
-        <div className="flex items-center gap-2">
-          <SaveDialog
-            currentName={savedName}
-            saving={saving}
-            dirty={dirty}
-            savedId={savedId}
-            onSave={save}
-          />
-          <Button size="sm" variant="outline" onClick={() => router.push("/dashboard")}>
-            New
-          </Button>
-          {savedId && <ShareButton calculationId={savedId} />}
-        </div>
-      </div>
-
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Sidebar — input form */}
         <aside className="w-full lg:w-[380px] shrink-0">
           <div className="sticky top-20 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
+            <ScenarioSelector
+              savedId={savedId}
+              savedName={savedName}
+              actions={
+                <div className="flex items-center gap-2 shrink-0">
+                  <SaveDialog
+                    currentName={savedName}
+                    saving={saving}
+                    dirty={dirty}
+                    savedId={savedId}
+                    onSave={save}
+                  />
+                  <Button size="sm" variant="outline" onClick={() => router.push("/dashboard")}>
+                    New
+                  </Button>
+                  {savedId && <ShareButton calculationId={savedId} />}
+                </div>
+              }
+            />
             <InputForm inputs={inputs} onChange={setInputs} />
           </div>
         </aside>
