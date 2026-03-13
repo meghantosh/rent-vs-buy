@@ -22,7 +22,7 @@ export function SharedCalculatorView({ name, inputs, authorName }: SharedCalcula
   const results = useMemo(() => computeResults(inputs), [inputs]);
 
   return (
-    <div className="max-w-5xl mx-auto p-4 lg:p-6 space-y-6 font-[family-name:var(--font-ibm-plex)]">
+    <div className="max-w-5xl mx-auto p-4 lg:p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">{name}</h1>
         {authorName && (
