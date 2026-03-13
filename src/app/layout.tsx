@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Geist_Mono } from "next/font/google";
+import { DM_Sans, Geist_Mono, IBM_Plex_Sans } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import "./globals.css";
@@ -14,6 +14,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const ibmPlexSans = IBM_Plex_Sans({
+  variable: "--font-ibm-plex",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "Rent vs. Buy Calculator",
   description:
@@ -26,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${geistMono.variable} ${ibmPlexSans.variable}`}>
       <body className="antialiased">
         <Providers>
           <Header />
