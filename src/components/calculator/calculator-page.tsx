@@ -36,7 +36,6 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
       <div className="flex items-center justify-between gap-4">
         <ScenarioSelector savedId={savedId} savedName={savedName} />
         <div className="flex items-center gap-2">
-          {savedId && <ShareButton calculationId={savedId} />}
           <SaveDialog
             currentName={savedName}
             saving={saving}
@@ -45,8 +44,9 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
             onSave={save}
           />
           <Button size="sm" variant="outline" onClick={() => router.push("/dashboard")}>
-            New Scenario
+            New
           </Button>
+          {savedId && <ShareButton calculationId={savedId} />}
         </div>
       </div>
 

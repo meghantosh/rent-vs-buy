@@ -60,7 +60,7 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
     <div className="flex items-center gap-2">
       {savedId && dirty && (
         <Button size="sm" variant="outline" onClick={handleQuickSave} disabled={saving}>
-          {saving ? "Saving..." : "Save Scenario"}
+          {saving ? "Saving..." : "Save"}
         </Button>
       )}
 
@@ -69,7 +69,7 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
           render={
             <Button
               size="sm"
-              variant={savedId ? "ghost" : "default"}
+              variant={savedId ? "outline" : "default"}
               onClick={() => {
                 if (requireAuth()) return;
                 setName(currentName || "");
@@ -77,11 +77,11 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
             />
           }
         >
-          {savedId ? "Save As..." : "Save Scenario"}
+          {savedId ? "Save As" : "Save"}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{savedId ? "Save As" : "Save Scenario"}</DialogTitle>
+            <DialogTitle>{savedId ? "Save As" : "Save"}</DialogTitle>
             <DialogDescription>
               Give your scenario a name so you can find it later.
             </DialogDescription>
