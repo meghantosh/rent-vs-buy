@@ -4,7 +4,7 @@ export interface CalculatorInputs {
   annualIncome: number;
   monthlyRent: number;
   housePrices: [number, number, number];
-  downPaymentPercent: number;
+  downPaymentPercents: [number, number, number];
   mortgageRate: number;
   monthlyHoa: number;
   propertyTaxRate: number;
