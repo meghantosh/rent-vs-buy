@@ -58,13 +58,6 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
 
   return (
     <div className="flex items-center gap-2">
-      {savedId && (
-        <span className="text-sm text-muted-foreground truncate max-w-[200px]">
-          {currentName}
-          {dirty && <span className="text-amber-500 ml-1">*</span>}
-        </span>
-      )}
-
       {savedId && dirty && (
         <Button size="sm" variant="outline" onClick={handleQuickSave} disabled={saving}>
           {saving ? "Saving..." : "Save Scenario"}
