@@ -72,7 +72,7 @@ export function ShareButton({ calculationId }: ShareButtonProps) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button size="sm" variant="outline" disabled={loading}>
+          <Button size="sm" variant="ghost" className="border border-current bg-transparent" disabled={loading}>
             <Share2 className="h-4 w-4" />
             {loading ? "Sharing..." : "Share"}
           </Button>

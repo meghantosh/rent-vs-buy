@@ -32,8 +32,8 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
   const router = useRouter();
 
   return (
-    <div className="p-4 lg:p-6 space-y-6">
-      <div className="flex flex-col lg:flex-row gap-6">
+    <div className="p-4 lg:p-6">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* Sidebar — input form */}
         <aside className="w-full lg:w-[380px] shrink-0">
           <div className="sticky top-20 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">

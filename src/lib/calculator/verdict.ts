@@ -39,7 +39,7 @@ export function computeVerdict(results: CalculatorResults): Verdict {
   if (rentWealth > bestWealth) {
     return {
       winner: "rent",
-      text: `Renting saves you ${fmtPrice(diff)} at year 10`,
+      text: `Renting saves ${fmtPrice(diff)} at year 10`,
       difference: diff,
       scenarioLabel: label,
       bestBuyIndex: bestIdx,
