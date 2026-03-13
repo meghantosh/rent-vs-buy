@@ -27,7 +27,7 @@ export function CalculationsList() {
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!confirm("Delete this calculation?")) return;
+    if (!confirm("Delete this scenario?")) return;
 
     await fetch(`/api/calculations/${id}`, { method: "DELETE" });
     setCalculations((prev) => prev.filter((c) => c.id !== id));
@@ -55,10 +55,10 @@ export function CalculationsList() {
           <ChevronRight
             className={`h-5 w-5 transition-transform ${open ? "rotate-90" : ""}`}
           />
-          Saved Calculations
+          Saved Scenarios
         </button>
         <Button onClick={() => router.push("/dashboard")}>
-          New Calculation
+          New Scenario
         </Button>
       </div>
 
@@ -68,7 +68,7 @@ export function CalculationsList() {
             <p className="text-muted-foreground text-sm pl-7">Loading...</p>
           ) : calculations.length === 0 ? (
             <p className="text-muted-foreground text-sm pl-7">
-              No saved calculations yet.
+              No saved scenarios yet.
             </p>
           ) : (
             calculations.map((calc) => (

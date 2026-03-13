@@ -44,7 +44,7 @@ export function ShareButton({ calculationId }: ShareButtonProps) {
       ) : (
         <>
           <Link2 className="h-3.5 w-3.5 mr-1" />
-          {sharing ? "Sharing..." : "Share"}
+          {sharing ? "Sharing..." : "Share Scenario"}
         </>
       )}
     </Button>

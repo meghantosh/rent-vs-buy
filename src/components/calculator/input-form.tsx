@@ -88,7 +88,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
       {/* Home Prices */}
       <section className="space-y-3">
         <h3 className="text-base font-semibold border-t border-foreground pt-3">Home Prices</h3>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {inputs.housePrices.map((price, i) => (
             <InputGroup
               key={i}
