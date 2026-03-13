@@ -34,7 +34,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
     <div className="space-y-6">
       {/* Income & Rent */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Income & Rent</h3>
+        <h3 className="text-base font-semibold border-t border-foreground pt-3">Income & Rent</h3>
         <InputGroup
           label="Annual Income"
           value={inputs.annualIncome}
@@ -68,7 +68,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
 
       {/* Current Savings */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Current Savings</h3>
+        <h3 className="text-base font-semibold border-t border-foreground pt-3">Current Savings</h3>
         <InputGroup
           label="Non-Retirement Investments"
           value={inputs.nonRetirementSavings}
@@ -87,7 +87,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
 
       {/* Home Prices */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Home Prices</h3>
+        <h3 className="text-base font-semibold border-t border-foreground pt-3">Home Prices</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {inputs.housePrices.map((price, i) => (
             <InputGroup
@@ -104,7 +104,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
 
       {/* Mortgage */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Mortgage</h3>
+        <h3 className="text-base font-semibold border-t border-foreground pt-3">Mortgage</h3>
         <InputGroup
           label="Down Payment"
           value={inputs.downPaymentPercent}
@@ -126,7 +126,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
 
       {/* Monthly Costs */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Monthly Costs</h3>
+        <h3 className="text-base font-semibold border-t border-foreground pt-3">Monthly Costs</h3>
         <InputGroup
           label="HOA"
           value={inputs.monthlyHoa}
@@ -159,7 +159,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
 
       {/* Growth Rates */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Growth Rates</h3>
+        <h3 className="text-base font-semibold border-t border-foreground pt-3">Growth Rates</h3>
         <InputGroup
           label="Home Appreciation"
           value={inputs.appreciationRate}
@@ -185,7 +185,7 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
 
       {/* Transaction Costs */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Transaction Costs</h3>
+        <h3 className="text-base font-semibold border-t border-foreground pt-3">Transaction Costs</h3>
         <InputGroup
           label="Buyer Closing"
           value={inputs.buyerClosingPercent}
