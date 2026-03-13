@@ -18,12 +18,14 @@ test("sign up and sign in with credentials", async ({ page }) => {
   await page.waitForURL("/dashboard**", { timeout: 15000 });
   await expect(page.locator("text=Assumptions")).toBeVisible();
 
-  // 2. Sign out by clearing cookies, then verify redirect
+  // 2. Sign out by clearing cookies, verify dashboard is accessible but unauthenticated
   await page.context().clearCookies();
   await page.goto("/dashboard");
-  await page.waitForURL("/sign-in**", { timeout: 10000 });
+  await page.waitForURL("/dashboard**", { timeout: 10000 });
+  await expect(page.locator("text=Assumptions")).toBeVisible();
 
-  // 3. Sign back in with the same credentials
+  // 3. Navigate to sign-in and sign back in with the same credentials
+  await page.goto("/sign-in");
   await expect(page.getByText("Welcome back")).toBeVisible();
 
   await page.getByLabel("Email").fill(TEST_EMAIL);

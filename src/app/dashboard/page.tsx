@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { calculations } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -13,15 +12,10 @@ interface Props {
 
 export default async function DashboardPage({ searchParams }: Props) {
   const session = await auth();
-
-  if (!session?.user) {
-    redirect("/sign-in");
-  }
-
   const { calc } = await searchParams;
 
-  // If a calc ID is provided, load it
-  if (calc) {
+  // If logged in and a calc ID is provided, load it
+  if (session?.user && calc) {
     const [row] = await db
       .select()
       .from(calculations)
@@ -41,13 +35,15 @@ export default async function DashboardPage({ searchParams }: Props) {
     }
   }
 
-  // No calc param → show new calculator with listing below
+  // Show calculator; saved calculations list only for logged-in users
   return (
     <div className="space-y-8">
       <CalculatorPage />
-      <div className="border-t px-4 lg:px-6 py-8">
-        <CalculationsList />
-      </div>
+      {session?.user && (
+        <div className="border-t px-4 lg:px-6 py-8">
+          <CalculationsList />
+        </div>
+      )}
     </div>
   );
 }
