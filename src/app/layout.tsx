@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, Geist_Mono, IBM_Plex_Sans } from "next/font/google";
+import { DM_Sans, IBM_Plex_Mono, IBM_Plex_Serif } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import "./globals.css";
@@ -9,12 +9,13 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
-const ibmPlexSans = IBM_Plex_Sans({
+const ibmPlexSerif = IBM_Plex_Serif({
   variable: "--font-ibm-plex",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -32,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${geistMono.variable} ${ibmPlexSans.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${ibmPlexMono.variable} ${ibmPlexSerif.variable}`}>
       <body className="antialiased">
         <Providers>
           <Header />
