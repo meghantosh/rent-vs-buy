@@ -16,13 +16,13 @@ test("sign up and sign in with credentials", async ({ page }) => {
 
   // Should redirect to dashboard after sign-up
   await page.waitForURL("/dashboard**", { timeout: 15000 });
-  await expect(page.locator("text=Assumptions")).toBeVisible();
+  await expect(page.getByText("Income & Rent")).toBeVisible();
 
   // 2. Sign out by clearing cookies, verify dashboard is accessible but unauthenticated
   await page.context().clearCookies();
   await page.goto("/dashboard");
   await page.waitForURL("/dashboard**", { timeout: 10000 });
-  await expect(page.locator("text=Assumptions")).toBeVisible();
+  await expect(page.getByText("Income & Rent")).toBeVisible();
 
   // 3. Navigate to sign-in and sign back in with the same credentials
   await page.goto("/sign-in");
@@ -34,5 +34,5 @@ test("sign up and sign in with credentials", async ({ page }) => {
 
   // Should land on dashboard with calculator
   await page.waitForURL("/dashboard**", { timeout: 15000 });
-  await expect(page.locator("text=Assumptions")).toBeVisible();
+  await expect(page.getByText("Income & Rent")).toBeVisible();
 });
