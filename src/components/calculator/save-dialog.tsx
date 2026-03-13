@@ -57,38 +57,15 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
   };
 
   return (
-    <div className="flex items-center gap-2">
-      {savedId && (
-        <span className="text-sm text-muted-foreground truncate max-w-[200px]">
-          {currentName}
-          {dirty && <span className="text-amber-500 ml-1">*</span>}
-        </span>
-      )}
-
-      {savedId && dirty && (
-        <Button size="sm" variant="outline" onClick={handleQuickSave} disabled={saving}>
-          {saving ? "Saving..." : "Save Scenario"}
-        </Button>
-      )}
+    <>
+      <Button size="sm" onClick={handleQuickSave} disabled={saving}>
+        {saving ? "Saving..." : "Save"}
+      </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger
-          render={
-            <Button
-              size="sm"
-              variant={savedId ? "ghost" : "default"}
-              onClick={() => {
-                if (requireAuth()) return;
-                setName(currentName || "");
-              }}
-            />
-          }
-        >
-          {savedId ? "Save As..." : "Save Scenario"}
-        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{savedId ? "Save As" : "Save Scenario"}</DialogTitle>
+            <DialogTitle>Save</DialogTitle>
             <DialogDescription>
               Give your scenario a name so you can find it later.
             </DialogDescription>
@@ -110,6 +87,6 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

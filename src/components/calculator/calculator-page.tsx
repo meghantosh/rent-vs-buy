@@ -11,6 +11,9 @@ import { ScenarioComparisonChart } from "./scenario-comparison-chart";
 import { ResultsTable } from "./results-table";
 import { SaveDialog } from "./save-dialog";
 import { ShareButton } from "./share-button";
+import { ScenarioSelector } from "./scenario-selector";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CalculatorPageProps {
@@ -25,14 +28,14 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
     initialId,
     initialName
   );
+  const router = useRouter();
 
   return (
     <div className="p-4 lg:p-6 space-y-6">
       {/* Full-width title row */}
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold">Rent or Buy</h1>
+        <ScenarioSelector savedId={savedId} savedName={savedName} />
         <div className="flex items-center gap-2">
-          {savedId && <ShareButton calculationId={savedId} />}
           <SaveDialog
             currentName={savedName}
             saving={saving}
@@ -40,6 +43,10 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
             savedId={savedId}
             onSave={save}
           />
+          <Button size="sm" variant="outline" onClick={() => router.push("/dashboard")}>
+            New
+          </Button>
+          {savedId && <ShareButton calculationId={savedId} />}
         </div>
       </div>
 
@@ -47,7 +54,6 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
         {/* Sidebar — input form */}
         <aside className="w-full lg:w-[380px] shrink-0">
           <div className="sticky top-20 space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
-            <h2 className="text-lg font-bold">Assumptions</h2>
             <InputForm inputs={inputs} onChange={setInputs} />
           </div>
         </aside>

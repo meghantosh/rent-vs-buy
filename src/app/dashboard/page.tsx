@@ -3,7 +3,6 @@ import { db } from "@/lib/db";
 import { calculations } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import { CalculatorPage } from "@/components/calculator/calculator-page";
-import { CalculationsList } from "@/components/calculator/calculations-list";
 
 
 interface Props {
@@ -27,6 +26,7 @@ export default async function DashboardPage({ searchParams }: Props) {
     if (row) {
       return (
         <CalculatorPage
+          key={row.id}
           initialInputs={row.inputs as never}
           initialId={row.id}
           initialName={row.name}
@@ -35,15 +35,5 @@ export default async function DashboardPage({ searchParams }: Props) {
     }
   }
 
-  // Show calculator; saved calculations list only for logged-in users
-  return (
-    <div className="space-y-8">
-      <CalculatorPage />
-      {session?.user && (
-        <div className="border-t px-4 lg:px-6 py-8">
-          <CalculationsList />
-        </div>
-      )}
-    </div>
-  );
+  return <CalculatorPage key="new" />;
 }

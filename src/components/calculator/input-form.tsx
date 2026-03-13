@@ -99,11 +99,10 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
       </section>
 
       {/* Home Prices & Down Payments */}
-      <section className="space-y-3">
+      <section className="space-y-5">
         <h3 className="text-base font-semibold border-t border-foreground pt-3">Home Prices & Down Payments</h3>
         {inputs.housePrices.map((price, i) => (
-          <div key={i} className="space-y-1">
-            <div className="grid grid-cols-2 gap-2">
+          <div key={i} className="grid grid-cols-2 gap-2">
               <InputGroup
                 label={`Price ${i + 1}`}
                 value={price}
@@ -111,19 +110,20 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
                 prefix="$"
                 step={25000}
               />
-              <InputGroup
-                label={`Down Payment ${i + 1}`}
-                value={inputs.downPaymentPercents[i]}
-                onChange={(v) => updateDownPayment(i, v)}
-                suffix="%"
-                step={1}
-                min={0}
-                max={100}
-              />
-            </div>
-            <p className="text-xs text-muted-foreground pl-1">
-              {formatDollar(price * inputs.downPaymentPercents[i] / 100)} down
-            </p>
+              <div>
+                <InputGroup
+                  label={`Down Payment ${i + 1}`}
+                  value={inputs.downPaymentPercents[i]}
+                  onChange={(v) => updateDownPayment(i, v)}
+                  suffix="%"
+                  step={1}
+                  min={0}
+                  max={100}
+                />
+                <p className="text-xs text-muted-foreground pl-1 mt-0.5">
+                  {formatDollar(price * inputs.downPaymentPercents[i] / 100)} down
+                </p>
+              </div>
           </div>
         ))}
       </section>
