@@ -29,16 +29,16 @@ export function isValidHex(value: string): boolean {
 }
 
 export const DEFAULT_PALETTES: [string, string][] = [
-  ["#f5ed68", "#f95f53"],
-  ["#6366f1", "#ec4899"],
-  ["#10b981", "#3b82f6"],
-  ["#f59e0b", "#7c3aed"],
-  ["#06b6d4", "#f43e5e"],
-  ["#8b5cf6", "#f97316"],
-  ["#14b8a6", "#e11d48"],
-  ["#facc15", "#2563eb"],
-  ["#a855f7", "#22c55e"],
-  ["#fb923c", "#6366f1"],
+  ["#9C5454", "#F1C878"],
+  ["#9C5454", "#D79CEA"],
+  ["#9C5454", "#6B8D5F"],
+  ["#9C5454", "#FF8E6F"],
+  ["#9C5454", "#F95F53"],
+  ["#6B8D5F", "#D6E65A"],
+  ["#D79CEA", "#FF8E6F"],
+  ["#F5ED68", "#3A0E00"],
+  ["#F5ED68", "#FF9839"],
+  ["#F5ED68", "#F1B9FD"],
 ];
 
 const STORAGE_KEY = "palette-visualizer-colors";
