@@ -36,17 +36,7 @@ export function ShareButton({ calculationId }: ShareButtonProps) {
       onClick={handleShare}
       disabled={sharing}
     >
-      {copied ? (
-        <>
-          <Check className="h-3.5 w-3.5 mr-1" />
-          Copied!
-        </>
-      ) : (
-        <>
-          <Link2 className="h-3.5 w-3.5 mr-1" />
-          {sharing ? "Sharing..." : "Share Scenario"}
-        </>
-      )}
+      {copied ? "Copied!" : sharing ? "Sharing..." : "Share"}
     </Button>
   );
 }
