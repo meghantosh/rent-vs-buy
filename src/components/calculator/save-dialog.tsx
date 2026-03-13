@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,17 +25,29 @@ interface SaveDialogProps {
 }
 
 export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: SaveDialogProps) {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(currentName || "");
 
+  const requireAuth = () => {
+    if (!session?.user) {
+      router.push("/sign-in");
+      return true;
+    }
+    return false;
+  };
+
   const handleSave = async () => {
     if (!name.trim()) return;
+    if (requireAuth()) return;
     await onSave(name.trim());
     setOpen(false);
   };
 
   // Quick save if already named
   const handleQuickSave = async () => {
+    if (requireAuth()) return;
     if (savedId && currentName) {
       await onSave(currentName);
     } else {
@@ -63,7 +77,10 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
             <Button
               size="sm"
               variant={savedId ? "ghost" : "default"}
-              onClick={() => { setName(currentName || ""); }}
+              onClick={() => {
+                if (requireAuth()) return;
+                setName(currentName || "");
+              }}
             />
           }
         >

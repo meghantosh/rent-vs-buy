@@ -1,12 +1,8 @@
 import { auth } from "@/lib/auth";
 
-export default auth((req) => {
-  const isLoggedIn = !!req.auth;
-  const { pathname } = req.nextUrl;
-
-  if (pathname.startsWith("/dashboard") && !isLoggedIn) {
-    return Response.redirect(new URL("/sign-in", req.nextUrl));
-  }
+export default auth(() => {
+  // Dashboard is publicly accessible; auth-gated actions
+  // (save, share) redirect to sign-in from the client side.
 });
 
 export const config = {
