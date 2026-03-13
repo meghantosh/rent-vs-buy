@@ -47,7 +47,7 @@ const features = [
   {
     title: "CA tax logic",
     description:
-      "California-specific tax calculations including Prop 13 property tax caps.",
+      "California-specific tax calculations including Prop 13 property tax caps and State and Local (SALT) tax deduction of mortgage interest from your federal taxes.",
   },
   {
     title: "30-year projections",
