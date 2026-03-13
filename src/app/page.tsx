@@ -133,7 +133,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Rent vs. Buy Calculator
+          &copy; {new Date().getFullYear()} Calcium75
         </div>
       </footer>
     </main>
