@@ -4,7 +4,7 @@ export const DEFAULT_INPUTS: CalculatorInputs = {
   annualIncome: 150000,
   monthlyRent: 3000,
   housePrices: [750000, 1000000, 1250000],
-  downPaymentPercent: 20,
+  downPaymentPercents: [20, 20, 20],
   mortgageRate: 6.5,
   monthlyHoa: 400,
   propertyTaxRate: 1.1,

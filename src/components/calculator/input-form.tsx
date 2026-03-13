@@ -30,6 +30,19 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
     onChange({ ...inputs, housePrices: prices });
   };
 
+  const updateDownPayment = (index: number, value: number) => {
+    const percents = [...inputs.downPaymentPercents] as [number, number, number];
+    percents[index] = value;
+    onChange({ ...inputs, downPaymentPercents: percents });
+  };
+
+  const formatDollar = (amount: number) => {
+    if (amount >= 1000) {
+      return `$${(amount / 1000).toFixed(0)}K`;
+    }
+    return `$${amount.toFixed(0)}`;
+  };
+
   return (
     <div className="space-y-6">
       {/* Income & Rent */}
@@ -85,35 +98,39 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
         />
       </section>
 
-      {/* Home Prices */}
+      {/* Home Prices & Down Payments */}
       <section className="space-y-3">
-        <h3 className="text-sm font-semibold">Home Prices</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {inputs.housePrices.map((price, i) => (
-            <InputGroup
-              key={i}
-              label={`Price ${i + 1}`}
-              value={price}
-              onChange={(v) => updatePrice(i, v)}
-              prefix="$"
-              step={25000}
-            />
-          ))}
-        </div>
+        <h3 className="text-sm font-semibold">Home Prices & Down Payments</h3>
+        {inputs.housePrices.map((price, i) => (
+          <div key={i} className="space-y-1">
+            <div className="grid grid-cols-2 gap-2">
+              <InputGroup
+                label={`Price ${i + 1}`}
+                value={price}
+                onChange={(v) => updatePrice(i, v)}
+                prefix="$"
+                step={25000}
+              />
+              <InputGroup
+                label={`Down Payment ${i + 1}`}
+                value={inputs.downPaymentPercents[i]}
+                onChange={(v) => updateDownPayment(i, v)}
+                suffix="%"
+                step={1}
+                min={0}
+                max={100}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground pl-1">
+              {formatDollar(price * inputs.downPaymentPercents[i] / 100)} down
+            </p>
+          </div>
+        ))}
       </section>
 
       {/* Mortgage */}
       <section className="space-y-3">
         <h3 className="text-sm font-semibold">Mortgage</h3>
-        <InputGroup
-          label="Down Payment"
-          value={inputs.downPaymentPercent}
-          onChange={(v) => update("downPaymentPercent", v)}
-          suffix="%"
-          step={1}
-          min={0}
-          max={100}
-        />
         <InputGroup
           label="Mortgage Rate"
           value={inputs.mortgageRate}

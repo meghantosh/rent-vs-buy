@@ -15,9 +15,10 @@ function buildScenarios(inputs: CalculatorInputs): BuyScenario[] {
   const terms: (15 | 30)[] = [15, 30];
   const scenarios: BuyScenario[] = [];
 
-  for (const price of inputs.housePrices) {
+  for (let pi = 0; pi < inputs.housePrices.length; pi++) {
+    const price = inputs.housePrices[pi];
     for (const term of terms) {
-      const downPayment = price * (inputs.downPaymentPercent / 100);
+      const downPayment = price * (inputs.downPaymentPercents[pi] / 100);
       const loanAmount = price - downPayment;
       const monthlyPI = monthlyPayment(loanAmount, inputs.mortgageRate, term);
       scenarios.push({
@@ -36,7 +37,14 @@ function buildScenarios(inputs: CalculatorInputs): BuyScenario[] {
 
 export function computeResults(inputs: CalculatorInputs): CalculatorResults {
   // Backward compat: old saved calculations missing new fields get defaults
-  const safeInputs = { ...DEFAULT_INPUTS, ...inputs };
+  // Migrate old single downPaymentPercent to per-price array
+  const legacy = inputs as CalculatorInputs & { downPaymentPercent?: number };
+  const migratedInputs = { ...inputs };
+  if (!migratedInputs.downPaymentPercents && legacy.downPaymentPercent != null) {
+    const pct = legacy.downPaymentPercent;
+    migratedInputs.downPaymentPercents = [pct, pct, pct];
+  }
+  const safeInputs = { ...DEFAULT_INPUTS, ...migratedInputs };
   const scenarios = buildScenarios(safeInputs);
   const yearSnapshots: YearSnapshot[] = [];
 
