@@ -35,13 +35,10 @@ export default async function OgImage({
     return new Response("Not found", { status: 404 });
   }
 
-  const dmSansFont = await fetch(
-    "https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriCZOIHTWEBlw.ttf"
-  ).then((res) => res.arrayBuffer());
-
-  const dmSansBold = await fetch(
-    "https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriCZ-NHzs.ttf"
-  ).then((res) => res.arrayBuffer());
+  const [dmSansFont, ibmPlexSerifBold] = await Promise.all([
+    fetch("https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriCZOIHTWEBlw.ttf").then((res) => res.arrayBuffer()),
+    fetch("https://fonts.gstatic.com/s/ibmplexserif/v19/jizAREVNn1dOx-zrZ2X3pZvkTiUa4442q1I.ttf").then((res) => res.arrayBuffer()),
+  ]);
 
   const results = computeResults(row.inputs as CalculatorInputs);
   const verdict = computeVerdict(results);
@@ -90,6 +87,7 @@ export default async function OgImage({
               fontWeight: 700,
               color: "#1a1a1a",
               textAlign: "center",
+              fontFamily: "IBM Plex Serif",
             }}
           >
             {verdict.text}
@@ -168,7 +166,7 @@ export default async function OgImage({
       ...size,
       fonts: [
         { name: "DM Sans", data: dmSansFont, weight: 400 },
-        { name: "DM Sans", data: dmSansBold, weight: 700 },
+        { name: "IBM Plex Serif", data: ibmPlexSerifBold, weight: 700 },
       ],
     }
   );

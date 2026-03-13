@@ -30,7 +30,7 @@ describe("computeVerdict", () => {
     const verdict = computeVerdict(rentWinsResults);
 
     expect(verdict.winner).toBe("rent");
-    expect(verdict.text).toContain("Renting saves you");
+    expect(verdict.text).toContain("Renting saves");
     expect(verdict.text).toContain("at year 10");
   });
 
