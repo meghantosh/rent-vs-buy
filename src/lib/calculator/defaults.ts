@@ -16,4 +16,6 @@ export const DEFAULT_INPUTS: CalculatorInputs = {
   buyerClosingPercent: 2,
   sellerClosingPercent: 5,
   filingStatus: "single",
+  nonRetirementSavings: 0,
+  retirementSavings: 0,
 };

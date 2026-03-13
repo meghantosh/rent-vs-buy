@@ -66,6 +66,25 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
         </div>
       </section>
 
+      {/* Current Savings */}
+      <section className="space-y-3">
+        <h3 className="text-sm font-semibold">Current Savings</h3>
+        <InputGroup
+          label="Non-Retirement Investments"
+          value={inputs.nonRetirementSavings}
+          onChange={(v) => update("nonRetirementSavings", v)}
+          prefix="$"
+          step={10000}
+        />
+        <InputGroup
+          label="Retirement Accounts (401k/IRA)"
+          value={inputs.retirementSavings}
+          onChange={(v) => update("retirementSavings", v)}
+          prefix="$"
+          step={10000}
+        />
+      </section>
+
       {/* Home Prices */}
       <section className="space-y-3">
         <h3 className="text-sm font-semibold">Home Prices</h3>

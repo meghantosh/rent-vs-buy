@@ -16,6 +16,8 @@ export interface CalculatorInputs {
   buyerClosingPercent: number;
   sellerClosingPercent: number;
   filingStatus: FilingStatus;
+  nonRetirementSavings: number;
+  retirementSavings: number;
 }
 
 export interface BuyScenario {
@@ -32,6 +34,7 @@ export interface RentYearSnapshot {
   annualCost: number;
   cumulativeCost: number;
   investmentBalance: number;
+  retirementBalance: number;
   totalWealth: number;
 }
 
@@ -45,6 +48,8 @@ export interface BuyYearSnapshot {
   remainingBalance: number;
   equity: number;
   netSaleProceeds: number;
+  nonRetirementPortfolio: number;
+  retirementBalance: number;
   totalWealth: number;
 }
 
