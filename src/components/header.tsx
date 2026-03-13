@@ -25,11 +25,11 @@ export function Header() {
           {session?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger
-                className={buttonVariants({ variant: "ghost", size: "icon" })}
+                className="group/trigger inline-flex items-center justify-center rounded-full outline-none select-none"
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={session.user.image ?? undefined} />
-                  <AvatarFallback>
+                  <AvatarFallback className="transition-colors group-hover/trigger:bg-[#F1C878]">
                     {session.user.name?.charAt(0)?.toUpperCase() ?? "U"}
                   </AvatarFallback>
                 </Avatar>

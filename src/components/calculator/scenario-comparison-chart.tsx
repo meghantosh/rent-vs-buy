@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 
+const RENT_COLOR = "#E2EBF2";
 const COLORS = [
   "#f5ed68",
   "#f6d164",
@@ -44,10 +45,12 @@ export function ScenarioComparisonChart({
     })),
   ];
 
+  const colorFor = (i: number) => (i === 0 ? RENT_COLOR : COLORS[(i - 1) % COLORS.length]);
+
   const chartConfig: ChartConfig = Object.fromEntries(
     data.map((d, i) => [
       d.name,
-      { label: d.name, color: COLORS[i % COLORS.length] },
+      { label: d.name, color: colorFor(i) },
     ])
   );
 
@@ -81,7 +84,7 @@ export function ScenarioComparisonChart({
             {data.map((entry, i) => (
               <Cell
                 key={entry.name}
-                fill={COLORS[i % COLORS.length]}
+                fill={colorFor(i)}
                 opacity={entry.wealth === maxWealth ? 1 : 0.7}
               />
             ))}

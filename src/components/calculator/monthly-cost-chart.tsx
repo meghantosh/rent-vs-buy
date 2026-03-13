@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 
+const RENT_COLOR = "#E2EBF2";
 const COLORS = [
   "#f5ed68",
   "#f6d164",
@@ -31,10 +32,12 @@ interface MonthlyCostChartProps {
 export function MonthlyCostChart({ results }: MonthlyCostChartProps) {
   const labels = ["Rent", ...results.scenarios.map((s) => s.label)];
 
+  const colorFor = (i: number) => (i === 0 ? RENT_COLOR : COLORS[(i - 1) % COLORS.length]);
+
   const chartConfig: ChartConfig = Object.fromEntries(
     labels.map((label, i) => [
       label,
-      { label, color: COLORS[i % COLORS.length] },
+      { label, color: colorFor(i) },
     ])
   );
 
@@ -56,7 +59,17 @@ export function MonthlyCostChart({ results }: MonthlyCostChartProps) {
         <ChartTooltip
           content={
             <ChartTooltipContent
-              formatter={(value) => `$${(value as number).toLocaleString()}`}
+              formatter={(value, _name, item) => (
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className="font-mono font-medium tabular-nums">
+                    ${(value as number).toLocaleString()}
+                  </span>
+                </div>
+              )}
             />
           }
         />
@@ -66,7 +79,7 @@ export function MonthlyCostChart({ results }: MonthlyCostChartProps) {
             key={label}
             type="monotone"
             dataKey={label}
-            stroke={COLORS[i % COLORS.length]}
+            stroke={colorFor(i)}
             strokeWidth={label === "Rent" ? 2.5 : 1.5}
             strokeDasharray={label === "Rent" ? "6 3" : undefined}
             dot={false}
