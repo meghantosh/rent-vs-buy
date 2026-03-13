@@ -56,7 +56,20 @@ export function MonthlyCostChart({ results }: MonthlyCostChartProps) {
         <ChartTooltip
           content={
             <ChartTooltipContent
-              formatter={(value) => `$${(value as number).toLocaleString()}`}
+              formatter={(value, name, item) => (
+                <div className="flex items-center gap-2 w-full justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-muted-foreground">{name}</span>
+                  </div>
+                  <span className="font-mono font-medium tabular-nums">
+                    ${(value as number).toLocaleString()}
+                  </span>
+                </div>
+              )}
             />
           }
         />
