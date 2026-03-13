@@ -6,6 +6,8 @@ export interface Verdict {
   text: string;
   difference: number;
   scenarioLabel?: string;
+  /** Index of the winning buy scenario (0-5) when buy wins */
+  bestBuyIndex: number;
 }
 
 export function computeVerdict(results: CalculatorResults): Verdict {
@@ -30,6 +32,7 @@ export function computeVerdict(results: CalculatorResults): Verdict {
       text: "Renting and buying are roughly equal at year 10",
       difference: diff,
       scenarioLabel: label,
+      bestBuyIndex: bestIdx,
     };
   }
 
@@ -39,6 +42,7 @@ export function computeVerdict(results: CalculatorResults): Verdict {
       text: `Renting saves you ${fmtPrice(diff)} at year 10`,
       difference: diff,
       scenarioLabel: label,
+      bestBuyIndex: bestIdx,
     };
   }
 
@@ -47,5 +51,6 @@ export function computeVerdict(results: CalculatorResults): Verdict {
     text: `Buying (${label}) builds ${fmtPrice(diff)} more wealth by year 10`,
     difference: diff,
     scenarioLabel: label,
+    bestBuyIndex: bestIdx,
   };
 }

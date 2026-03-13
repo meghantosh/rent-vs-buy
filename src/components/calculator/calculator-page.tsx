@@ -52,7 +52,6 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
                   <Button size="sm" variant="outline" onClick={() => router.push("/dashboard")}>
                     New
                   </Button>
-                  {savedId && <ShareButton calculationId={savedId} />}
                 </div>
               }
             />
@@ -62,7 +61,10 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
 
         {/* Results area */}
         <main className="flex-1 min-w-0 space-y-6">
-          <VerdictBanner results={results} />
+          <VerdictBanner
+            results={results}
+            actions={savedId && <ShareButton calculationId={savedId} />}
+          />
           <SummaryCards results={results} />
           <BreakevenBanner results={results} />
 
