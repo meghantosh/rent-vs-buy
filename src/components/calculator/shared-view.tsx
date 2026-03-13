@@ -9,6 +9,7 @@ import { WealthChart } from "./wealth-chart";
 import { MonthlyCostChart } from "./monthly-cost-chart";
 import { ScenarioComparisonChart } from "./scenario-comparison-chart";
 import { ResultsTable } from "./results-table";
+import { VerdictBanner } from "./verdict-banner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface SharedCalculatorViewProps {
@@ -29,6 +30,7 @@ export function SharedCalculatorView({ name, inputs, authorName }: SharedCalcula
         )}
       </div>
 
+      <VerdictBanner results={results} />
       <SummaryCards results={results} />
       <BreakevenBanner results={results} />
 

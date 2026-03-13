@@ -12,6 +12,7 @@ import { ResultsTable } from "./results-table";
 import { SaveDialog } from "./save-dialog";
 import { ShareButton } from "./share-button";
 import { ScenarioSelector } from "./scenario-selector";
+import { VerdictBanner } from "./verdict-banner";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -51,7 +52,6 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
                   <Button size="sm" variant="outline" onClick={() => router.push("/dashboard")}>
                     New
                   </Button>
-                  {savedId && <ShareButton calculationId={savedId} />}
                 </div>
               }
             />
@@ -61,6 +61,10 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
 
         {/* Results area */}
         <main className="flex-1 min-w-0 space-y-6">
+          <VerdictBanner
+            results={results}
+            actions={savedId && <ShareButton calculationId={savedId} />}
+          />
           <SummaryCards results={results} />
           <BreakevenBanner results={results} />
 
