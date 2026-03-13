@@ -5,8 +5,19 @@ import type { CalculatorInputs } from "@/lib/calculator/types";
 import { DEFAULT_INPUTS } from "@/lib/calculator/defaults";
 import { computeResults } from "@/lib/calculator/engine";
 
+function migrateInputs(raw?: CalculatorInputs): CalculatorInputs {
+  if (!raw) return DEFAULT_INPUTS;
+  const legacy = raw as CalculatorInputs & { downPaymentPercent?: number };
+  const migrated = { ...DEFAULT_INPUTS, ...raw };
+  if (!raw.downPaymentPercents && legacy.downPaymentPercent != null) {
+    const pct = legacy.downPaymentPercent;
+    migrated.downPaymentPercents = [pct, pct, pct];
+  }
+  return migrated;
+}
+
 export function useCalculator(initialInputs?: CalculatorInputs, initialId?: string, initialName?: string) {
-  const [inputs, setInputs] = useState<CalculatorInputs>(initialInputs ?? DEFAULT_INPUTS);
+  const [inputs, setInputs] = useState<CalculatorInputs>(() => migrateInputs(initialInputs));
   const [savedId, setSavedId] = useState<string | null>(initialId ?? null);
   const [savedName, setSavedName] = useState<string>(initialName ?? "");
   const [saving, setSaving] = useState(false);
