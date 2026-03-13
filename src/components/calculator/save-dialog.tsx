@@ -53,7 +53,7 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
 
       {savedId && dirty && (
         <Button size="sm" variant="outline" onClick={handleQuickSave} disabled={saving}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? "Saving..." : "Save Scenario"}
         </Button>
       )}
 
@@ -67,13 +67,13 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
             />
           }
         >
-          {savedId ? "Save As..." : "Save"}
+          {savedId ? "Save As..." : "Save Scenario"}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{savedId ? "Save As" : "Save Calculation"}</DialogTitle>
+            <DialogTitle>{savedId ? "Save As" : "Save Scenario"}</DialogTitle>
             <DialogDescription>
-              Give your calculation a name so you can find it later.
+              Give your scenario a name so you can find it later.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
