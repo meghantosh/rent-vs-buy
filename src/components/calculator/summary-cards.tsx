@@ -2,6 +2,7 @@
 
 import type { CalculatorResults } from "@/lib/calculator/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fmtPrice } from "@/lib/calculator/format";
 
 function fmt(n: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -44,7 +45,7 @@ export function SummaryCards({ results }: SummaryCardsProps) {
 
       {/* One column per price point */}
       {priceGroups.map(({ price, s15, s30 }, i) => {
-        const label = `$${(price / 1000).toFixed(0)}K`;
+        const label = fmtPrice(price);
         return (
           <Card key={i} size="sm">
             <CardHeader>

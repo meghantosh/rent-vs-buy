@@ -37,6 +37,10 @@ export function InputForm({ inputs, onChange }: InputFormProps) {
   };
 
   const formatDollar = (amount: number) => {
+    if (amount >= 1000000) {
+      const m = amount / 1000000;
+      return `$${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}M`;
+    }
     if (amount >= 1000) {
       return `$${(amount / 1000).toFixed(0)}K`;
     }

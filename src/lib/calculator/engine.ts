@@ -10,6 +10,7 @@ import type {
 import { monthlyPayment, remainingBalance, interestPaidInYear } from "./mortgage";
 import { calcPropertyTax, calcTotalTaxBenefit } from "./taxes";
 import { DEFAULT_INPUTS } from "./defaults";
+import { fmtPrice } from "./format";
 
 function buildScenarios(inputs: CalculatorInputs): BuyScenario[] {
   const terms: (15 | 30)[] = [15, 30];
@@ -22,7 +23,7 @@ function buildScenarios(inputs: CalculatorInputs): BuyScenario[] {
       const loanAmount = price - downPayment;
       const monthlyPI = monthlyPayment(loanAmount, inputs.mortgageRate, term);
       scenarios.push({
-        label: `$${(price / 1000).toFixed(0)}K / ${term}yr`,
+        label: `${fmtPrice(price)} / ${term}yr`,
         price,
         term,
         downPayment,
