@@ -43,6 +43,11 @@ export function Header() {
                 >
                   Dashboard
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  render={<Link href="/palette" />}
+                >
+                  Palettes
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
                   Sign out
                 </DropdownMenuItem>

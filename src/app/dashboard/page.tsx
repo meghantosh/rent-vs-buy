@@ -6,6 +6,7 @@ import { eq, and } from "drizzle-orm";
 import { CalculatorPage } from "@/components/calculator/calculator-page";
 import { CalculationsList } from "@/components/calculator/calculations-list";
 
+
 interface Props {
   searchParams: Promise<{ calc?: string }>;
 }
