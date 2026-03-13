@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
 
+const RENT_COLOR = "#E2EBF2";
 const COLORS = [
   "#f5ed68",
   "#f6d164",
@@ -32,10 +33,12 @@ interface WealthChartProps {
 export function WealthChart({ results }: WealthChartProps) {
   const labels = ["Rent", ...results.scenarios.map((s) => s.label)];
 
+  const colorFor = (i: number) => (i === 0 ? RENT_COLOR : COLORS[(i - 1) % COLORS.length]);
+
   const chartConfig: ChartConfig = Object.fromEntries(
     labels.map((label, i) => [
       label,
-      { label, color: COLORS[i % COLORS.length] },
+      { label, color: colorFor(i) },
     ])
   );
 
@@ -57,15 +60,12 @@ export function WealthChart({ results }: WealthChartProps) {
         <ChartTooltip
           content={
             <ChartTooltipContent
-              formatter={(value, name, item) => (
-                <div className="flex items-center gap-2 w-full justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="text-muted-foreground">{name}</span>
-                  </div>
+              formatter={(value, _name, item) => (
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
                   <span className="font-mono font-medium tabular-nums">
                     {fmtK(value as number)}
                   </span>
@@ -80,7 +80,7 @@ export function WealthChart({ results }: WealthChartProps) {
             key={label}
             type="monotone"
             dataKey={label}
-            stroke={COLORS[i % COLORS.length]}
+            stroke={colorFor(i)}
             strokeWidth={label === "Rent" ? 2.5 : 1.5}
             strokeDasharray={label === "Rent" ? "6 3" : undefined}
             dot={false}
