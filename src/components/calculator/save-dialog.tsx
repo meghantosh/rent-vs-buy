@@ -57,31 +57,15 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
   };
 
   return (
-    <div className="flex items-center gap-2">
-      {savedId && dirty && (
-        <Button size="sm" variant="outline" onClick={handleQuickSave} disabled={saving}>
-          {saving ? "Saving..." : "Save"}
-        </Button>
-      )}
+    <>
+      <Button size="sm" onClick={handleQuickSave} disabled={saving}>
+        {saving ? "Saving..." : "Save"}
+      </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger
-          render={
-            <Button
-              size="sm"
-              variant={savedId ? "outline" : "default"}
-              onClick={() => {
-                if (requireAuth()) return;
-                setName(currentName || "");
-              }}
-            />
-          }
-        >
-          {savedId ? "Save As" : "Save"}
-        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{savedId ? "Save As" : "Save"}</DialogTitle>
+            <DialogTitle>Save</DialogTitle>
             <DialogDescription>
               Give your scenario a name so you can find it later.
             </DialogDescription>
@@ -103,6 +87,6 @@ export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: Save
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }
