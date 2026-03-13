@@ -26,6 +26,7 @@ export default async function DashboardPage({ searchParams }: Props) {
     if (row) {
       return (
         <CalculatorPage
+          key={row.id}
           initialInputs={row.inputs as never}
           initialId={row.id}
           initialName={row.name}
@@ -34,5 +35,5 @@ export default async function DashboardPage({ searchParams }: Props) {
     }
   }
 
-  return <CalculatorPage />;
+  return <CalculatorPage key="new" />;
 }
