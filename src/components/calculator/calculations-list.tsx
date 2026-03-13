@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2 } from "lucide-react";
+import { ChevronRight, Trash2 } from "lucide-react";
 
 interface Calculation {
   id: string;
@@ -16,6 +15,7 @@ interface Calculation {
 export function CalculationsList() {
   const [calculations, setCalculations] = useState<Calculation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,58 +34,68 @@ export function CalculationsList() {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
+    const d = new Date(dateStr);
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    const year = d.getFullYear();
+    const hours = d.getHours();
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const h12 = hours % 12 || 12;
+    return `${month}/${day}/${year}, ${h12}:${minutes} ${ampm}`;
   };
 
   return (
-    <div className="space-y-6">
+    <div>
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Saved Calculations</h2>
+        <button
+          onClick={() => setOpen(!open)}
+          className="flex items-center gap-2 text-xl font-bold cursor-pointer bg-transparent border-none p-0"
+        >
+          <ChevronRight
+            className={`h-5 w-5 transition-transform ${open ? "rotate-90" : ""}`}
+          />
+          Saved Calculations
+        </button>
         <Button onClick={() => router.push("/dashboard")}>
           New Calculation
         </Button>
       </div>
 
-      {loading ? (
-        <p className="text-muted-foreground">Loading...</p>
-      ) : calculations.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
-            No saved calculations yet. Create one and hit Save to see it here.
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-3">
-          {calculations.map((calc) => (
-            <Card
-              key={calc.id}
-              className="cursor-pointer transition-colors hover:bg-muted/50"
-              onClick={() => router.push(`/dashboard?calc=${calc.id}`)}
-            >
-              <CardHeader className="flex-row items-center justify-between py-3">
-                <div>
-                  <CardTitle className="text-base">{calc.name}</CardTitle>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Updated {formatDate(calc.updatedAt)}
-                  </p>
+      {open && (
+        <div className="mt-4 space-y-1">
+          {loading ? (
+            <p className="text-muted-foreground text-sm pl-7">Loading...</p>
+          ) : calculations.length === 0 ? (
+            <p className="text-muted-foreground text-sm pl-7">
+              No saved calculations yet.
+            </p>
+          ) : (
+            calculations.map((calc) => (
+              <div
+                key={calc.id}
+                className="flex items-center justify-between pl-7 pr-1 py-1.5 rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => router.push(`/dashboard?calc=${calc.id}`)}
+              >
+                <div className="flex items-baseline gap-3 min-w-0">
+                  <span className="text-sm font-medium truncate">
+                    {calc.name}
+                  </span>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
+                    {formatDate(calc.updatedAt)}
+                  </span>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                  className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={(e) => handleDelete(calc.id, e)}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-3.5 w-3.5" />
                 </Button>
-              </CardHeader>
-            </Card>
-          ))}
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
