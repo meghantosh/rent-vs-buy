@@ -70,7 +70,7 @@ export default function HomePage() {
           can make a confident decision.
         </p>
         <div className="mt-10 flex gap-4 justify-center">
-          <Link href="/sign-up" className={buttonVariants({ size: "lg" })}>
+          <Link href="/dashboard" className={buttonVariants({ size: "lg" })}>
             Get Started
           </Link>
           <Link href="/sign-in" className={buttonVariants({ size: "lg", variant: "outline" })}>
@@ -124,8 +124,8 @@ export default function HomePage() {
             Create a free account and start comparing rent vs. buy scenarios in
             minutes.
           </p>
-          <Link href="/sign-up" className={buttonVariants({ size: "lg" })}>
-            Get Started Free
+          <Link href="/dashboard" className={buttonVariants({ size: "lg" })}>
+            Try It Free
           </Link>
         </div>
       </section>
