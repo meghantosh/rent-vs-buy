@@ -8,15 +8,7 @@ export const revalidate = 3600;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const RENT_COLOR = "#E2EBF2";
-const COLORS = [
-  "#f5ed68",
-  "#f6d164",
-  "#f7b460",
-  "#f7985b",
-  "#f87b57",
-  "#f95f53",
-];
+import { RENT_COLOR, BUY_COLORS as COLORS } from "@/lib/chart-colors";
 
 function fmtK(n: number): string {
   if (Math.abs(n) >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
