@@ -68,12 +68,13 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
     const rentAnnualCost = monthlyRent * 12;
     rentCumulativeCost += rentAnnualCost;
 
-    // Grow each renter investment balance
+    // Grow each renter investment balance, then deduct rent paid this year
     for (let i = 0; i < scenarios.length; i++) {
       rentInvestmentBalances[i] *= 1 + safeInputs.investmentReturnRate / 100;
+      rentInvestmentBalances[i] -= rentAnnualCost;
     }
 
-    // Grow buyer investment balances
+    // Grow buyer investment balances (housing costs deducted after buy snapshot calc below)
     for (let i = 0; i < scenarios.length; i++) {
       buyInvestmentBalances[i] *= 1 + safeInputs.investmentReturnRate / 100;
     }
@@ -143,18 +144,22 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       };
     });
 
+    // Deduct buyer housing costs from their investment balances
+    for (let i = 0; i < scenarios.length; i++) {
+      buyInvestmentBalances[i] -= buySnapshots[i].annualCost;
+    }
+
     yearSnapshots.push({ year, rent, buy: buySnapshots });
   }
 
-  // Compute per-scenario rent wealth using scenario-specific investment balances
-  // and determine breakeven years
+  // Compute per-scenario summaries and determine breakeven years
+  // Use the rent totalWealth from yearSnapshots which already accounts for rent costs
   const summaries: ScenarioSummary[] = scenarios.map((scenario, i) => {
     let breakevenYear: number | null = null;
-    let investBal = rentInvestmentBases[i];
     for (let y = 1; y <= 30; y++) {
-      investBal *= 1 + safeInputs.investmentReturnRate / 100;
+      const rentWealth = yearSnapshots[y - 1].rent.totalWealth;
       const buyWealth = yearSnapshots[y - 1].buy[i].totalWealth;
-      if (breakevenYear === null && buyWealth > investBal) {
+      if (breakevenYear === null && buyWealth > rentWealth) {
         breakevenYear = y;
       }
     }
@@ -168,22 +173,12 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
     };
   });
 
-  // Recalculate rent wealth at 10yr and 30yr using first scenario's investment base
-  let rentInvBal10 = rentInvestmentBases[0];
-  let rentInvBal30 = rentInvestmentBases[0];
-  for (let y = 1; y <= 30; y++) {
-    if (y <= 10) {
-      rentInvBal10 = rentInvestmentBases[0] * Math.pow(1 + safeInputs.investmentReturnRate / 100, y);
-    }
-    rentInvBal30 = rentInvestmentBases[0] * Math.pow(1 + safeInputs.investmentReturnRate / 100, y);
-  }
-
   return {
     scenarios,
     yearSnapshots,
     rentYear1Monthly: safeInputs.monthlyRent,
-    rentWealth10yr: rentInvBal10,
-    rentWealth30yr: rentInvBal30,
+    rentWealth10yr: yearSnapshots[9].rent.totalWealth,
+    rentWealth30yr: yearSnapshots[29].rent.totalWealth,
     summaries,
   };
 }
