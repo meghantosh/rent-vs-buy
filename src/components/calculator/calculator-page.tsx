@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { CalculatorInputs } from "@/lib/calculator/types";
 import { useCalculator } from "@/hooks/use-calculator";
 import { InputForm } from "./input-form";
@@ -30,6 +31,7 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
     initialName
   );
   const router = useRouter();
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
 
   return (
     <div className="p-4 lg:p-6">
@@ -48,6 +50,8 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
                     dirty={dirty}
                     savedId={savedId}
                     onSave={save}
+                    externalOpen={saveDialogOpen}
+                    onExternalOpenChange={setSaveDialogOpen}
                   />
                   <Button size="sm" variant="outline" onClick={() => router.push("/dashboard")}>
                     New
@@ -63,7 +67,12 @@ export function CalculatorPage({ initialInputs, initialId, initialName }: Calcul
         <main className="flex-1 min-w-0 space-y-6">
           <VerdictBanner
             results={results}
-            actions={savedId && <ShareButton calculationId={savedId} />}
+            actions={
+              <ShareButton
+                calculationId={savedId}
+                onNeedsSave={() => setSaveDialogOpen(true)}
+              />
+            }
           />
           <SummaryCards results={results} />
           <BreakevenBanner results={results} />

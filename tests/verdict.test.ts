@@ -32,6 +32,7 @@ describe("computeVerdict", () => {
     expect(verdict.winner).toBe("rent");
     expect(verdict.text).toContain("Renting saves");
     expect(verdict.text).toContain("at year 10");
+    expect(verdict.subtext).toMatch(/vs\. a \d+yr mortgage on \$/);
   });
 
   it("returns buy wins when buying is clearly better", () => {

@@ -29,11 +29,18 @@ export function ResultsTable({ results }: ResultsTableProps) {
         <TableHeader>
           <TableRow>
             <TableHead className="sticky left-0 bg-background z-10">Year</TableHead>
-            <TableHead>Rent/mo</TableHead>
-            <TableHead>Rent Wealth</TableHead>
+            <TableHead>
+              <div>Rent/mo</div>
+              <div className="mt-1 h-1 rounded-full" style={{ backgroundColor: "var(--chart-rent)" }} />
+            </TableHead>
+            <TableHead>
+              <div>Rent Wealth</div>
+              <div className="mt-1 h-1 rounded-full" style={{ backgroundColor: "var(--chart-rent)" }} />
+            </TableHead>
             {results.scenarios.map((s, i) => (
               <TableHead key={i} colSpan={3} className="text-center border-l">
-                {s.label}
+                <div>{s.label}</div>
+                <div className="mt-1 h-1 rounded-full" style={{ backgroundColor: `var(--chart-${i + 1})` }} />
               </TableHead>
             ))}
           </TableRow>
