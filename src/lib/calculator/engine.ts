@@ -51,11 +51,9 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
 
   // Track cumulative state
   let rentCumulativeCost = 0;
-  // Renter keeps all savings plus what they didn't spend on buying
-  const rentInvestmentBases = scenarios.map(
-    (s) => safeInputs.nonRetirementSavings + s.downPayment + s.price * (safeInputs.buyerClosingPercent / 100)
-  );
-  const rentInvestmentBalances = [...rentInvestmentBases];
+  // Renter keeps all their non-retirement savings (no down payment or closing costs spent)
+  const rentInvestmentBase = safeInputs.nonRetirementSavings;
+  const rentInvestmentBalances = scenarios.map(() => rentInvestmentBase);
   // Buyer's remaining non-retirement portfolio after down payment + closing costs
   const buyInvestmentBalances = scenarios.map(
     (s) => Math.max(0, safeInputs.nonRetirementSavings - s.downPayment - s.price * (safeInputs.buyerClosingPercent / 100))
