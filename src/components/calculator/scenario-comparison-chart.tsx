@@ -9,14 +9,14 @@ import {
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 
-const RENT_COLOR = "#E2EBF2";
+const RENT_COLOR = "var(--chart-rent)";
 const COLORS = [
-  "#f5ed68",
-  "#f6d164",
-  "#f7b460",
-  "#f7985b",
-  "#f87b57",
-  "#f95f53",
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+  "var(--chart-6)",
 ];
 
 function fmtK(n: number): string {
