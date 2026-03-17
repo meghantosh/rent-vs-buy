@@ -66,28 +66,14 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
     const rentAnnualCost = monthlyRent * 12;
     rentCumulativeCost += rentAnnualCost;
 
-    // Grow each renter investment balance, then deduct rent paid this year
+    // Grow all investment balances by market return
     for (let i = 0; i < scenarios.length; i++) {
       rentInvestmentBalances[i] *= 1 + safeInputs.investmentReturnRate / 100;
-      rentInvestmentBalances[i] -= rentAnnualCost;
-    }
-
-    // Grow buyer investment balances (housing costs deducted after buy snapshot calc below)
-    for (let i = 0; i < scenarios.length; i++) {
       buyInvestmentBalances[i] *= 1 + safeInputs.investmentReturnRate / 100;
     }
 
     // Retirement grows identically for both sides
     const retirementBalance = safeInputs.retirementSavings * Math.pow(1 + safeInputs.investmentReturnRate / 100, year);
-
-    const rent: RentYearSnapshot = {
-      monthlyRent,
-      annualCost: rentAnnualCost,
-      cumulativeCost: rentCumulativeCost,
-      investmentBalance: rentInvestmentBalances[0], // Use first scenario's for display
-      retirementBalance,
-      totalWealth: rentInvestmentBalances[0],
-    };
 
     // --- Buy scenarios ---
     const buySnapshots: BuyYearSnapshot[] = scenarios.map((scenario, i) => {
@@ -114,6 +100,17 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       const netMonthlyCost = monthlyHousingCost - monthlyTaxBenefit;
       const annualCost = netMonthlyCost * 12;
       buyCumulativeCosts[i] += annualCost;
+
+      // Cash flow differential: whoever pays less for housing invests the difference.
+      // Both sides pay housing from income; only the delta affects investment balances.
+      const annualCashFlowDiff = rentAnnualCost - annualCost;
+      if (annualCashFlowDiff > 0) {
+        // Buying is cheaper — buyer invests the savings
+        buyInvestmentBalances[i] += annualCashFlowDiff;
+      } else {
+        // Renting is cheaper — renter invests the savings
+        rentInvestmentBalances[i] += Math.abs(annualCashFlowDiff);
+      }
 
       // Home value and equity
       const homeValue = price * Math.pow(1 + safeInputs.appreciationRate / 100, year);
@@ -142,10 +139,14 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       };
     });
 
-    // Deduct buyer housing costs from their investment balances
-    for (let i = 0; i < scenarios.length; i++) {
-      buyInvestmentBalances[i] -= buySnapshots[i].annualCost;
-    }
+    const rent: RentYearSnapshot = {
+      monthlyRent,
+      annualCost: rentAnnualCost,
+      cumulativeCost: rentCumulativeCost,
+      investmentBalance: rentInvestmentBalances[0],
+      retirementBalance,
+      totalWealth: rentInvestmentBalances[0],
+    };
 
     yearSnapshots.push({ year, rent, buy: buySnapshots });
   }
