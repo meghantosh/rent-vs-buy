@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,6 +14,7 @@ import {
 
 export function Header() {
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -48,6 +50,11 @@ export function Header() {
                 >
                   Palettes
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  render={<Link href="/faq" />}
+                >
+                  FAQ
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
                   Sign out
                 </DropdownMenuItem>
@@ -55,11 +62,14 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <>
+              <Link href="/faq" className={buttonVariants({ variant: "ghost" })}>
+                FAQ
+              </Link>
               <Link href="/sign-in" className={buttonVariants({ variant: "ghost" })}>
                 Sign in
               </Link>
               <Link href="/sign-up" className={buttonVariants()}>
-                Get Started
+                {pathname.startsWith("/dashboard") ? "Sign up" : "Get Started"}
               </Link>
             </>
           )}
