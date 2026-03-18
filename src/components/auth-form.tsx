@@ -74,7 +74,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </CardTitle>
         <CardDescription>
           {isSignUp
-            ? "Enter your details to get started"
+            ? "Enter your details to unlock save and share functionality"
             : "Sign in to your account"}
         </CardDescription>
       </CardHeader>

@@ -32,7 +32,12 @@ export function VerdictBanner({ results, actions }: VerdictBannerProps) {
       className="rounded-lg border p-4 flex items-center justify-between gap-4"
       style={{ backgroundColor: bgColor }}
     >
-      <p className="text-4xl font-bold font-[family-name:var(--font-ibm-plex)]">{verdict.text}</p>
+      <div>
+        <p className="text-4xl font-bold font-[family-name:var(--font-ibm-plex)]">{verdict.text}</p>
+        {verdict.subtext && (
+          <p className="text-lg text-muted-foreground mt-1">{verdict.subtext}</p>
+        )}
+      </div>
       {actions && <div className="shrink-0">{actions}</div>}
     </div>
   );

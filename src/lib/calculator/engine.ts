@@ -51,11 +51,9 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
 
   // Track cumulative state
   let rentCumulativeCost = 0;
-  // Renter keeps all savings plus what they didn't spend on buying
-  const rentInvestmentBases = scenarios.map(
-    (s) => safeInputs.nonRetirementSavings + s.downPayment + s.price * (safeInputs.buyerClosingPercent / 100)
-  );
-  const rentInvestmentBalances = [...rentInvestmentBases];
+  // Renter keeps all their non-retirement savings (no down payment or closing costs spent)
+  const rentInvestmentBase = safeInputs.nonRetirementSavings;
+  const rentInvestmentBalances = scenarios.map(() => rentInvestmentBase);
   // Buyer's remaining non-retirement portfolio after down payment + closing costs
   const buyInvestmentBalances = scenarios.map(
     (s) => Math.max(0, safeInputs.nonRetirementSavings - s.downPayment - s.price * (safeInputs.buyerClosingPercent / 100))
@@ -68,27 +66,14 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
     const rentAnnualCost = monthlyRent * 12;
     rentCumulativeCost += rentAnnualCost;
 
-    // Grow each renter investment balance
+    // Grow all investment balances by market return
     for (let i = 0; i < scenarios.length; i++) {
       rentInvestmentBalances[i] *= 1 + safeInputs.investmentReturnRate / 100;
-    }
-
-    // Grow buyer investment balances
-    for (let i = 0; i < scenarios.length; i++) {
       buyInvestmentBalances[i] *= 1 + safeInputs.investmentReturnRate / 100;
     }
 
     // Retirement grows identically for both sides
     const retirementBalance = safeInputs.retirementSavings * Math.pow(1 + safeInputs.investmentReturnRate / 100, year);
-
-    const rent: RentYearSnapshot = {
-      monthlyRent,
-      annualCost: rentAnnualCost,
-      cumulativeCost: rentCumulativeCost,
-      investmentBalance: rentInvestmentBalances[0], // Use first scenario's for display
-      retirementBalance,
-      totalWealth: rentInvestmentBalances[0],
-    };
 
     // --- Buy scenarios ---
     const buySnapshots: BuyYearSnapshot[] = scenarios.map((scenario, i) => {
@@ -115,6 +100,17 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       const netMonthlyCost = monthlyHousingCost - monthlyTaxBenefit;
       const annualCost = netMonthlyCost * 12;
       buyCumulativeCosts[i] += annualCost;
+
+      // Cash flow differential: whoever pays less for housing invests the difference.
+      // Both sides pay housing from income; only the delta affects investment balances.
+      const annualCashFlowDiff = rentAnnualCost - annualCost;
+      if (annualCashFlowDiff > 0) {
+        // Buying is cheaper — buyer invests the savings
+        buyInvestmentBalances[i] += annualCashFlowDiff;
+      } else {
+        // Renting is cheaper — renter invests the savings
+        rentInvestmentBalances[i] += Math.abs(annualCashFlowDiff);
+      }
 
       // Home value and equity
       const homeValue = price * Math.pow(1 + safeInputs.appreciationRate / 100, year);
@@ -143,18 +139,26 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       };
     });
 
+    const rent: RentYearSnapshot = {
+      monthlyRent,
+      annualCost: rentAnnualCost,
+      cumulativeCost: rentCumulativeCost,
+      investmentBalance: rentInvestmentBalances[0],
+      retirementBalance,
+      totalWealth: rentInvestmentBalances[0],
+    };
+
     yearSnapshots.push({ year, rent, buy: buySnapshots });
   }
 
-  // Compute per-scenario rent wealth using scenario-specific investment balances
-  // and determine breakeven years
+  // Compute per-scenario summaries and determine breakeven years
+  // Use the rent totalWealth from yearSnapshots which already accounts for rent costs
   const summaries: ScenarioSummary[] = scenarios.map((scenario, i) => {
     let breakevenYear: number | null = null;
-    let investBal = rentInvestmentBases[i];
     for (let y = 1; y <= 30; y++) {
-      investBal *= 1 + safeInputs.investmentReturnRate / 100;
+      const rentWealth = yearSnapshots[y - 1].rent.totalWealth;
       const buyWealth = yearSnapshots[y - 1].buy[i].totalWealth;
-      if (breakevenYear === null && buyWealth > investBal) {
+      if (breakevenYear === null && buyWealth > rentWealth) {
         breakevenYear = y;
       }
     }
@@ -168,22 +172,12 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
     };
   });
 
-  // Recalculate rent wealth at 10yr and 30yr using first scenario's investment base
-  let rentInvBal10 = rentInvestmentBases[0];
-  let rentInvBal30 = rentInvestmentBases[0];
-  for (let y = 1; y <= 30; y++) {
-    if (y <= 10) {
-      rentInvBal10 = rentInvestmentBases[0] * Math.pow(1 + safeInputs.investmentReturnRate / 100, y);
-    }
-    rentInvBal30 = rentInvestmentBases[0] * Math.pow(1 + safeInputs.investmentReturnRate / 100, y);
-  }
-
   return {
     scenarios,
     yearSnapshots,
     rentYear1Monthly: safeInputs.monthlyRent,
-    rentWealth10yr: rentInvBal10,
-    rentWealth30yr: rentInvBal30,
+    rentWealth10yr: yearSnapshots[9].rent.totalWealth,
+    rentWealth30yr: yearSnapshots[29].rent.totalWealth,
     summaries,
   };
 }

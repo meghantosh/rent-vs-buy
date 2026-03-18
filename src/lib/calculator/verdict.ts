@@ -4,6 +4,8 @@ import { fmtPrice } from "./format";
 export interface Verdict {
   winner: "rent" | "buy" | "tie";
   text: string;
+  /** Subtitle providing additional context (e.g. what rent is compared against) */
+  subtext?: string;
   difference: number;
   scenarioLabel?: string;
   /** Index of the winning buy scenario (0-5) when buy wins */
@@ -37,9 +39,11 @@ export function computeVerdict(results: CalculatorResults): Verdict {
   }
 
   if (rentWealth > bestWealth) {
+    const scenario = results.summaries[bestIdx].scenario;
     return {
       winner: "rent",
       text: `Renting saves ${fmtPrice(diff)} at year 10`,
+      subtext: `vs. a ${scenario.term}yr mortgage on ${fmtPrice(scenario.price)}`,
       difference: diff,
       scenarioLabel: label,
       bestBuyIndex: bestIdx,
