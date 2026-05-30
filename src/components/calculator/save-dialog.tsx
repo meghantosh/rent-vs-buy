@@ -22,13 +22,21 @@ interface SaveDialogProps {
   dirty: boolean;
   savedId: string | null;
   onSave: (name: string) => Promise<void>;
+  externalOpen?: boolean;
+  onExternalOpenChange?: (open: boolean) => void;
 }
 
-export function SaveDialog({ currentName, saving, dirty, savedId, onSave }: SaveDialogProps) {
+export function SaveDialog({ currentName, saving, dirty, savedId, onSave, externalOpen, onExternalOpenChange }: SaveDialogProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [name, setName] = useState(currentName || "");
+
+  const open = externalOpen ?? internalOpen;
+  const setOpen = (v: boolean) => {
+    setInternalOpen(v);
+    onExternalOpenChange?.(v);
+  };
 
   const requireAuth = () => {
     if (!session?.user) {

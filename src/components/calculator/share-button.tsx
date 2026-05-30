@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,15 +14,34 @@ import {
 import { Link2, Check, Share2 } from "lucide-react";
 
 interface ShareButtonProps {
-  calculationId: string;
+  calculationId?: string | null;
+  onNeedsSave?: () => void;
 }
 
-export function ShareButton({ calculationId }: ShareButtonProps) {
+export function ShareButton({ calculationId, onNeedsSave }: ShareButtonProps) {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const handleUnsaved = () => {
+    if (!session?.user) {
+      router.push("/sign-in");
+      return true;
+    }
+    if (onNeedsSave) {
+      onNeedsSave();
+      return true;
+    }
+    return true;
+  };
+
   const getShareUrl = async (): Promise<string | null> => {
+    if (!calculationId) {
+      handleUnsaved();
+      return null;
+    }
     if (shareUrl) return shareUrl;
     setLoading(true);
     try {
@@ -67,6 +88,21 @@ export function ShareButton({ calculationId }: ShareButtonProps) {
       "noopener,noreferrer"
     );
   };
+
+  // When no saved calculation, show a simple button that prompts save/login
+  if (!calculationId) {
+    return (
+      <Button
+        size="sm"
+        variant="ghost"
+        className="border border-current bg-transparent"
+        onClick={() => handleUnsaved()}
+      >
+        <Share2 className="h-4 w-4" />
+        Share
+      </Button>
+    );
+  }
 
   return (
     <DropdownMenu>
