@@ -2,7 +2,14 @@ import { describe, it, expect } from "vitest";
 import { computeResults } from "@/lib/calculator/engine";
 import { computeVerdict } from "@/lib/calculator/verdict";
 import { monthlyPayment } from "@/lib/calculator/mortgage";
-import { calcPropertyTax, calcTotalTaxBenefit, saltCap } from "@/lib/calculator/taxes";
+import {
+  calcPropertyTax,
+  calcTotalTaxBenefit,
+  saltCap,
+  homeSaleCapGainsTax,
+  portfolioCapGainsTax,
+  capitalGainsRate,
+} from "@/lib/calculator/taxes";
 import { DEFAULT_INPUTS } from "@/lib/calculator/defaults";
 import type { CalculatorInputs } from "@/lib/calculator/types";
 
@@ -83,5 +90,32 @@ describe("verdict", () => {
     const v = computeVerdict(r);
     const best = Math.max(...r.summaries.map((s) => s.wealth10yr));
     expect(r.summaries[v.bestBuyIndex].wealth10yr).toBe(best);
+  });
+});
+
+describe("REGRESSION: P&I stops at payoff", () => {
+  const r = computeResults(base);
+  const i15 = r.scenarios.findIndex((s) => s.price === 1_000_000 && s.term === 15);
+  it("drops the 15yr net cost sharply the year after payoff", () => {
+    const yr15 = r.yearSnapshots[14].buy[i15].netMonthlyCost;
+    const yr16 = r.yearSnapshots[15].buy[i15].netMonthlyCost;
+    // Year 16 has no P&I — should fall by roughly the monthly payment.
+    expect(yr16).toBeLessThan(yr15 * 0.5);
+    expect(yr16).toBeGreaterThan(0); // taxes + insurance + maintenance remain
+  });
+});
+
+describe("capital gains", () => {
+  it("applies the §121 exclusion: a sub-exclusion home gain owes no home tax", () => {
+    // $200k gain, single ($250k exclusion) -> 0
+    expect(homeSaleCapGainsTax(1_200_000, 1_000_000, 240_000, "single")).toBe(0);
+    // $400k gain, single -> taxed on $150k
+    expect(homeSaleCapGainsTax(1_400_000, 1_000_000, 240_000, "single")).toBeGreaterThan(0);
+  });
+  it("taxes embedded portfolio gains at liquidation", () => {
+    expect(portfolioCapGainsTax(100_000, 100_000, 240_000, "single")).toBe(0); // no gain
+    expect(portfolioCapGainsTax(200_000, 100_000, 240_000, "single")).toBeCloseTo(
+      100_000 * capitalGainsRate(240_000, "single"), 6
+    );
   });
 });

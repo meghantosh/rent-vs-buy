@@ -8,7 +8,12 @@ import type {
   CalculatorResults,
 } from "./types";
 import { monthlyPayment, remainingBalance, interestPaidInYear } from "./mortgage";
-import { calcPropertyTax, calcTotalTaxBenefit } from "./taxes";
+import {
+  calcPropertyTax,
+  calcTotalTaxBenefit,
+  portfolioCapGainsTax,
+  homeSaleCapGainsTax,
+} from "./taxes";
 import { DEFAULT_INPUTS } from "./defaults";
 import { fmtPrice } from "./format";
 
@@ -69,6 +74,16 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
     )
   );
 
+  // Cost basis for each portfolio (for capital-gains-at-liquidation). Starting
+  // savings are treated as basis (we tax only gains accruing from year 0), and
+  // basis tracks net contributions thereafter. Symmetric across rent/buy.
+  const rentBasis = safeInputs.nonRetirementSavings;
+  const buyBasis = [...buyPortfolios];
+
+  // Capital-gains rate depends only on income + filing status — compute once.
+  const cgRate = (v: number, b: number) =>
+    portfolioCapGainsTax(v, b, safeInputs.annualIncome, safeInputs.filingStatus);
+
   let rentCumulativeCost = 0;
   const buyCumulativeCosts = scenarios.map(() => 0);
 
@@ -95,8 +110,10 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       const monthlyPropertyTax = annualPropertyTax / 12;
       const monthlyInsurance = safeInputs.annualInsurance / 12;
       const monthlyMaintenance = (price * (safeInputs.maintenancePercent / 100)) / 12;
+      // P&I stops once the loan is paid off; only carrying costs remain.
+      const monthlyPIThisYear = year <= term ? monthlyPI : 0;
       const monthlyHousingCost =
-        monthlyPI + monthlyPropertyTax + monthlyInsurance + safeInputs.monthlyHoa + monthlyMaintenance;
+        monthlyPIThisYear + monthlyPropertyTax + monthlyInsurance + safeInputs.monthlyHoa + monthlyMaintenance;
 
       const yearInterest =
         year <= term ? interestPaidInYear(loanAmount, safeInputs.mortgageRate, term, year) : 0;
@@ -117,6 +134,7 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       // portfolio. (The renter's single portfolio is unaffected; the gap is
       // identical to a pairwise model — see note above.)
       buyPortfolios[i] += rentAnnualCost - annualCost;
+      buyBasis[i] += rentAnnualCost - annualCost; // net contribution adjusts basis
 
       const homeValue = price * Math.pow(1 + safeInputs.appreciationRate / 100, year);
       const monthsPaid = Math.min(year * 12, term * 12);
@@ -126,8 +144,22 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
           : 0;
       const equity = homeValue - Math.max(0, balance);
       const sellerClosing = homeValue * (safeInputs.sellerClosingPercent / 100);
-      const netSaleProceeds = equity - sellerClosing;
-      const nonRetirementPortfolio = buyPortfolios[i];
+
+      // Capital gains at liquidation (assumes selling this year):
+      //  - home: gain over (purchase price + buyer closing) above the §121 exclusion
+      //  - side portfolio: gain over tracked basis
+      const homeBasisCost = price + price * (safeInputs.buyerClosingPercent / 100);
+      const amountRealized = homeValue - sellerClosing;
+      const homeTax = homeSaleCapGainsTax(
+        amountRealized,
+        homeBasisCost,
+        safeInputs.annualIncome,
+        safeInputs.filingStatus
+      );
+      const portfolioTax = cgRate(buyPortfolios[i], buyBasis[i]);
+
+      const netSaleProceeds = equity - sellerClosing - homeTax;
+      const nonRetirementPortfolio = buyPortfolios[i] - portfolioTax;
 
       return {
         monthlyHousingCost,
@@ -145,13 +177,14 @@ export function computeResults(inputs: CalculatorInputs): CalculatorResults {
       };
     });
 
+    const rentTax = cgRate(rentPortfolio, rentBasis);
     const rent: RentYearSnapshot = {
       monthlyRent,
       annualCost: rentAnnualCost,
       cumulativeCost: rentCumulativeCost,
       investmentBalance: rentPortfolio,
       retirementBalance,
-      totalWealth: rentPortfolio,
+      totalWealth: rentPortfolio - rentTax,
     };
 
     yearSnapshots.push({ year, rent, buy: buySnapshots });

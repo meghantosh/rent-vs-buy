@@ -9,6 +9,10 @@ import {
   SALT_PHASEOUT_RATE,
   SALT_FLOOR,
   MORTGAGE_INTEREST_DEBT_CAP,
+  federalLtcgRate,
+  NIIT_RATE,
+  NIIT_THRESHOLD,
+  PRIMARY_RESIDENCE_EXCLUSION,
 } from "./tax-brackets";
 
 /** Prop 13: assessed value grows max 2%/year from the purchase price. */
@@ -101,4 +105,44 @@ export function calcTotalTaxBenefit(
   const federal = calcFederalTaxBenefit(interest, propertyTax, income, filingStatus);
   const state = calcStateTaxBenefit(interest, propertyTax, income, filingStatus);
   return (federal + state) / 12;
+}
+
+// --- Capital gains at liquidation -----------------------------------------
+
+/**
+ * Combined long-term capital gains rate: federal LTCG (0/15/20) + NIIT (3.8%
+ * over the MAGI threshold) + CA (which taxes gains as ordinary income, so we
+ * reuse the CA marginal rate). Income is used as a MAGI/taxable-income proxy.
+ */
+export function capitalGainsRate(income: number, filingStatus: FilingStatus): number {
+  const federal = federalLtcgRate(income, filingStatus);
+  const niit = income > NIIT_THRESHOLD[filingStatus] ? NIIT_RATE : 0;
+  const ca = getMarginalRate(income, filingStatus, "ca");
+  return federal + niit + ca;
+}
+
+/** Tax on liquidating an investment portfolio (value vs cost basis). */
+export function portfolioCapGainsTax(
+  value: number,
+  basis: number,
+  income: number,
+  filingStatus: FilingStatus
+): number {
+  return Math.max(0, value - basis) * capitalGainsRate(income, filingStatus);
+}
+
+/**
+ * Tax on selling the primary residence. `amountRealized` is the sale price net
+ * of selling costs; `basis` is purchase price + acquisition costs. The §121
+ * exclusion shields the first $250k single / $500k MFJ of gain.
+ */
+export function homeSaleCapGainsTax(
+  amountRealized: number,
+  basis: number,
+  income: number,
+  filingStatus: FilingStatus
+): number {
+  const gain = Math.max(0, amountRealized - basis);
+  const taxable = Math.max(0, gain - PRIMARY_RESIDENCE_EXCLUSION[filingStatus]);
+  return taxable * capitalGainsRate(income, filingStatus);
 }

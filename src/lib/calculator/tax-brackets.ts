@@ -119,3 +119,30 @@ export function calcTaxOwed(
   }
   return tax;
 }
+
+// --- Long-term capital gains ----------------------------------------------
+// Federal LTCG breakpoints by taxable income (~2025/2026; refresh annually).
+interface LtcgBand { upTo: number; rate: number; }
+const FEDERAL_LTCG_SINGLE: LtcgBand[] = [
+  { upTo: 48_350, rate: 0.0 },
+  { upTo: 533_400, rate: 0.15 },
+  { upTo: Infinity, rate: 0.20 },
+];
+const FEDERAL_LTCG_MFJ: LtcgBand[] = [
+  { upTo: 96_700, rate: 0.0 },
+  { upTo: 600_050, rate: 0.15 },
+  { upTo: Infinity, rate: 0.20 },
+];
+
+// Net Investment Income Tax (3.8%) over a MAGI threshold (not inflation-indexed).
+export const NIIT_RATE = 0.038;
+export const NIIT_THRESHOLD = { single: 200_000, mfj: 250_000 };
+
+// IRC §121 primary-residence gain exclusion.
+export const PRIMARY_RESIDENCE_EXCLUSION = { single: 250_000, mfj: 500_000 };
+
+export function federalLtcgRate(income: number, filingStatus: FilingStatus): number {
+  const bands = filingStatus === "single" ? FEDERAL_LTCG_SINGLE : FEDERAL_LTCG_MFJ;
+  for (const b of bands) if (income <= b.upTo) return b.rate;
+  return 0.20;
+}
