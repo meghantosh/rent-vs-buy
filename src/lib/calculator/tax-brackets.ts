@@ -1,12 +1,22 @@
 import type { FilingStatus } from "./types";
 
+/**
+ * Tax year these tables target. Bracket THRESHOLDS drift with inflation every
+ * year; refresh them annually against IRS Rev. Proc. and CA FTB tables.
+ * (For incomes around $200k–$300k the resulting MARGINAL rate is stable across
+ * recent years, so the year-to-year threshold drift does not change this tool's
+ * output materially — but keep it current to stay correct across all incomes.)
+ */
+export const TAX_YEAR = 2026;
+
 interface Bracket {
   min: number;
   max: number;
   rate: number;
 }
 
-// Federal 2024 brackets
+// Federal brackets (rates are stable; thresholds shown are ~2024 and should be
+// bumped to the current year — see TAX_YEAR note above).
 const FEDERAL_SINGLE: Bracket[] = [
   { min: 0, max: 11600, rate: 0.10 },
   { min: 11600, max: 47150, rate: 0.12 },
@@ -27,7 +37,6 @@ const FEDERAL_MFJ: Bracket[] = [
   { min: 731200, max: Infinity, rate: 0.37 },
 ];
 
-// CA 2024 brackets
 const CA_SINGLE: Bracket[] = [
   { min: 0, max: 10412, rate: 0.01 },
   { min: 10412, max: 24684, rate: 0.02 },
@@ -54,8 +63,22 @@ const CA_MFJ: Bracket[] = [
   { min: 2000000, max: Infinity, rate: 0.133 },
 ];
 
-export const FEDERAL_STANDARD_DEDUCTION = { single: 14600, mfj: 29200 };
-export const CA_STANDARD_DEDUCTION = { single: 5540, mfj: 11080 };
+// 2026 standard deductions (confirmed): federal $16,100 single / $32,200 MFJ.
+export const FEDERAL_STANDARD_DEDUCTION = { single: 16100, mfj: 32200 };
+// CA standard deduction is small and indexed annually; ~2026 approximations.
+export const CA_STANDARD_DEDUCTION = { single: 5800, mfj: 11600 };
+
+// --- SALT (state & local tax) deduction limit, OBBBA 2025+ ---
+// 2026 cap $40,400; phases down 30c per $1 of MAGI over the threshold,
+// never below the $10,000 floor; reverts to $10,000 in 2030.
+export const SALT_CAP = 40400;
+export const SALT_PHASEOUT_THRESHOLD = 505000; // 2026 (2025 was $500,000)
+export const SALT_PHASEOUT_RATE = 0.30;
+export const SALT_FLOOR = 10000;
+
+// Mortgage interest is deductible only on the first $750k of acquisition debt
+// (permanent under OBBBA).
+export const MORTGAGE_INTEREST_DEBT_CAP = 750000;
 
 function getBrackets(
   jurisdiction: "federal" | "ca",
@@ -67,7 +90,7 @@ function getBrackets(
   return filingStatus === "single" ? CA_SINGLE : CA_MFJ;
 }
 
-/** Get the marginal tax rate for a given income */
+/** Marginal tax rate for a given income. */
 export function getMarginalRate(
   income: number,
   filingStatus: FilingStatus,
@@ -75,9 +98,51 @@ export function getMarginalRate(
 ): number {
   const brackets = getBrackets(jurisdiction, filingStatus);
   for (let i = brackets.length - 1; i >= 0; i--) {
-    if (income > brackets[i].min) {
-      return brackets[i].rate;
-    }
+    if (income > brackets[i].min) return brackets[i].rate;
   }
   return brackets[0].rate;
+}
+
+/** Progressive (effective) tax owed on an income — used to estimate the state
+ *  income tax that fills the SALT bucket. */
+export function calcTaxOwed(
+  income: number,
+  filingStatus: FilingStatus,
+  jurisdiction: "federal" | "ca"
+): number {
+  const brackets = getBrackets(jurisdiction, filingStatus);
+  let tax = 0;
+  for (const b of brackets) {
+    if (income <= b.min) break;
+    const taxableInBracket = Math.min(income, b.max) - b.min;
+    tax += taxableInBracket * b.rate;
+  }
+  return tax;
+}
+
+// --- Long-term capital gains ----------------------------------------------
+// Federal LTCG breakpoints by taxable income (~2025/2026; refresh annually).
+interface LtcgBand { upTo: number; rate: number; }
+const FEDERAL_LTCG_SINGLE: LtcgBand[] = [
+  { upTo: 48_350, rate: 0.0 },
+  { upTo: 533_400, rate: 0.15 },
+  { upTo: Infinity, rate: 0.20 },
+];
+const FEDERAL_LTCG_MFJ: LtcgBand[] = [
+  { upTo: 96_700, rate: 0.0 },
+  { upTo: 600_050, rate: 0.15 },
+  { upTo: Infinity, rate: 0.20 },
+];
+
+// Net Investment Income Tax (3.8%) over a MAGI threshold (not inflation-indexed).
+export const NIIT_RATE = 0.038;
+export const NIIT_THRESHOLD = { single: 200_000, mfj: 250_000 };
+
+// IRC §121 primary-residence gain exclusion.
+export const PRIMARY_RESIDENCE_EXCLUSION = { single: 250_000, mfj: 500_000 };
+
+export function federalLtcgRate(income: number, filingStatus: FilingStatus): number {
+  const bands = filingStatus === "single" ? FEDERAL_LTCG_SINGLE : FEDERAL_LTCG_MFJ;
+  for (const b of bands) if (income <= b.upTo) return b.rate;
+  return 0.20;
 }

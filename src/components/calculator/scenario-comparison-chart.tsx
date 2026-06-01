@@ -20,7 +20,7 @@ const COLORS = [
 ];
 
 function fmtK(n: number): string {
-  if (Math.abs(n) >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (Math.abs(n) >= 1_000_000) return `$${parseFloat((n / 1_000_000).toFixed(2))}M`;
   return `$${(n / 1000).toFixed(0)}K`;
 }
 
